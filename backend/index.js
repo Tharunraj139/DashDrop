@@ -12,17 +12,17 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const prisma = new PrismaClient();
 
-// --- Create 'uploads' directory if it doesn't exist ---
+// Create 'uploads' directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
 }
 
-// --- Middleware ---
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// --- File Storage Configuration (using Multer) ---
+// File Storage Configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, file, cb) => {
@@ -31,53 +31,38 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + uniqueSuffix + extension);
     },
 });
-
 const upload = multer({ storage: storage });
 
 // --- API Routes ---
 
-// @route   POST /api/upload
-// @desc    Uploads files and creates a share record in the database
+// Upload files and create a share record
 app.post('/api/upload', upload.array('files'), async (req, res) => {
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({ error: 'No files were uploaded.' });
     }
-
     try {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const filenames = req.files.map(f => f.filename);
         const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiry
-
         const newShare = await prisma.share.create({
             data: {
                 otp: otp,
                 filenames: filenames,
                 expiresAt: expiresAt,
-                burnAfterDownload: req.body.burnAfterDownload === 'true', // Handle this from frontend
+                burnAfterDownload: req.body.burnAfterDownload === 'true',
             },
         });
-        
-        console.log(`Created share with OTP: ${newShare.otp}`);
-        res.status(200).json({
-            message: 'Files uploaded successfully!',
-            otp: newShare.otp,
-        });
-
+        res.status(200).json({ otp: newShare.otp });
     } catch (error) {
-        console.error("Error creating share record:", error);
         res.status(500).json({ error: "Could not create share link." });
     }
 });
 
-
-// @route   POST /api/download
-// @desc    Verifies OTP and serves files as a zip archive
+// Verify OTP and serve files as a zip archive
 app.post('/api/download', async (req, res) => {
     try {
         const { otp } = req.body;
-        if (!otp) {
-            return res.status(400).json({ error: 'OTP is required.' });
-        }
+        if (!otp) return res.status(400).json({ error: 'OTP is required.' });
 
         const share = await prisma.share.findUnique({ where: { otp: otp } });
 
@@ -86,47 +71,39 @@ app.post('/api/download', async (req, res) => {
         }
 
         res.attachment('DashDrop-files.zip');
-        const archive = archiver('zip', { zlib: { level: 9 } });
+        const archive = archiver('zip');
         archive.pipe(res);
-
         for (const filename of share.filenames) {
             const filePath = path.join(__dirname, 'uploads', filename);
-            if (fs.existsSync(filePath)) {
-                archive.file(filePath, { name: filename });
-            }
+            if (fs.existsSync(filePath)) archive.file(filePath, { name: filename });
         }
-
         await archive.finalize();
 
         if (share.burnAfterDownload) {
             for (const filename of share.filenames) {
                 const filePath = path.join(__dirname, 'uploads', filename);
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
+                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
             }
             await prisma.share.delete({ where: { id: share.id } });
-            console.log(`Burned share with OTP: ${otp}`);
         }
-
     } catch (error) {
-        console.error("Error during download:", error);
         res.status(500).json({ error: "Could not process download." });
     }
 });
 
-
 // --- Serve Static Frontend Files ---
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
-if (fs.existsSync(frontendDistPath)) {
-    app.use(express.static(frontendDistPath));
+app.use(express.static(frontendDistPath));
 
-    // --- Catch-all route to serve index.html for any other request ---
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(frontendDistPath, 'index.html'));
-    });
-}
-
+// Catch-all route to serve index.html
+app.get('*', (req, res) => {
+    const indexPath = path.join(frontendDistPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        res.status(404).send("Frontend build not found. Please run 'npm run build' in the /frontend directory.");
+    }
+});
 
 // --- Start Server ---
 app.listen(PORT, () => {
