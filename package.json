@@ -1,0 +1,8 @@
+{
+  "name": "dashdrop",
+  "private": true,
+  "scripts": {
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "start": "cd backend && npm start"
+  }
+}
