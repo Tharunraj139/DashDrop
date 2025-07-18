@@ -1,0 +1,21 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Defines the model for our shared file bundles
+model Share {
+  id                String    @id @default(cuid())
+  otp               String    @unique
+  filenames         Json      // A list of the uploaded file names
+  burnAfterDownload Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  expiresAt         DateTime
+}

@@ -1,0 +1,132 @@
+/* frontend/src/components/SharePanel.css */
+.share-panel {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.panel-header h2 {
+  margin-top: 0;
+  color: #1a202c;
+}
+
+.panel-header p {
+  color: #718096;
+  margin-bottom: 24px;
+}
+
+.upload-box {
+  border: 2px dashed #e2e8f0;
+  border-radius: 8px;
+  padding: 40px;
+  margin-bottom: 24px;
+  background-color: #f7fafc;
+}
+
+.upload-box p {
+  margin: 0 0 16px 0;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.browse-btn {
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.download-section p {
+  margin: 0 0 8px 0;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.otp-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.otp-input {
+  flex-grow: 1;
+  border: 1px solid #cbd5e0;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.download-btn {
+  background-color: #48bb78;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+/* Add these new styles to the bottom of SharePanel.css */
+
+.upload-btn {
+    width: 100%;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+.file-list {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.file-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list li {
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+/* Add these new styles to the bottom of SharePanel.css */
+
+.otp-display {
+    background-color: #f7fafc;
+    border: 1px dashed #4299e1;
+    color: #2b6cb0;
+    font-size: 36px;
+    font-weight: bold;
+    letter-spacing: 8px;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.reset-btn {
+    background-color: transparent;
+    border: 1px solid #cbd5e0;
+    color: #4a5568;
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
+}
