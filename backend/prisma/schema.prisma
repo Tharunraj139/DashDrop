@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // Changed from sqlite
-  url      = env("postgresql://postgres:[Tharun@139$]@db.vcvigaichxlhikddsjwg.supabase.co:5432/postgres")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 // ... rest of the file
 
