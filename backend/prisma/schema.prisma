@@ -14,7 +14,7 @@ datasource db {
 model Share {
   id                String    @id @default(cuid())
   otp               String    @unique
-  filenames         Json      // A list of the uploaded file names
+  filenames         String     // A list of the uploaded file names
   burnAfterDownload Boolean   @default(false)
   createdAt         DateTime  @default(now())
   expiresAt         DateTime
