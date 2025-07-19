@@ -6,9 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "postgresql" // Changed from sqlite
+  url      = env("postgresql://postgres:[25!qG*.b4v98CdY]@db.vcvigaichxlhikddsjwg.supabase.co:5432/postgres")
 }
+// ... rest of the file
 
 // Defines the model for our shared file bundles
 model Share {
